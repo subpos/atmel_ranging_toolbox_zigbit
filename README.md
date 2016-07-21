@@ -1,8 +1,10 @@
 # atmel_ranging_toolbox_zigbit
 Modifications to allow the Atmel RTB to run on an Atmel ATxmega256A3U-and-AT86RF233-ZigBit:
+
 http://www.atmel.com/devices/ATxmega256A3U-and-AT86RF233-ZigBit-Wireless-Module.aspx
 
 The original Ranging Toolbox evaluation application is located here:
+
 http://www.atmel.com/tools/REB233SMAD-EK.aspx?tab=documents
 
 Details:
@@ -22,5 +24,8 @@ source for the xmega and the event timer is fed by the prescaler instead.
 Some minor fixes are included as well to prevent a lockup which occurs when the AT86RF233 doesn't
 wake up from sleep occasionally (this would normally happen randomly, but more than once an
 hour or so).
+
+You can adjust CONT_RANGING_PERIOD_MS   (100UL) in rtb_eval_app_param.h if you want faster 
+continuous ranging measurements.
 
 Licence - please read the Atmel EULA before using.
