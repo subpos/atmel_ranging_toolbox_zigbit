@@ -100,6 +100,7 @@ void pal_trx_reg_write(uint8_t addr, uint8_t data)
  */
 uint8_t pal_trx_reg_read(uint8_t addr)
 {
+	
     uint8_t register_value = 0;
 
     ENTER_TRX_REGION();
@@ -194,7 +195,6 @@ void pal_trx_frame_read(uint8_t *data, uint8_t length)
 void pal_trx_frame_write(uint8_t *data, uint8_t length)
 {
 #ifndef NON_BLOCKING_SPI
-
     /* Assumption: The TAL has already disabled the trx interrupt. */
 
     /* Start SPI transaction by pulling SEL low */
@@ -294,7 +294,6 @@ uint8_t pal_trx_bit_read(uint8_t addr, uint8_t mask, uint8_t pos)
 void pal_trx_bit_write(uint8_t reg_addr, uint8_t mask, uint8_t pos, uint8_t new_value)
 {
     uint8_t current_reg_value;
-
     current_reg_value = pal_trx_reg_read(reg_addr);
     current_reg_value &= (uint8_t)~(uint16_t)mask;  // Implicit casting required to avoid IAR Pa091.
     new_value <<= pos;

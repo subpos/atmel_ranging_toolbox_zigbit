@@ -259,9 +259,15 @@ tal_trx_status_t set_trx_state(trx_cmd_t trx_cmd)
          * will be restored.
          */
         /* Reset wake-up interrupt flag. */
+#ifndef EXTERNAL_OSC
         tal_awake_end_flag = false;
+#else
+        tal_awake_end_flag = true; //This negates the callback function when using CLKM as clock.
+#endif
         /* Set callback function for the awake interrupt. */
+#ifndef EXTERNAL_OSC
         pal_trx_irq_init(trx_irq_awake_handler_cb);
+#endif
         /* The pending transceiver interrupts on the microcontroller are cleared. */
         pal_trx_irq_flag_clr();
         pal_trx_irq_en();     /* Enable transceiver main interrupt. */
@@ -332,7 +338,6 @@ tal_trx_status_t set_trx_state(trx_cmd_t trx_cmd)
         case CMD_DEEP_SLEEP:
 #endif
             pal_trx_reg_write(RG_TRX_STATE, CMD_FORCE_TRX_OFF);
-
 #if (ANTENNA_DIVERSITY == 1)
             /*
              *  Disable antenna diversity: to reduce the power consumption or
@@ -376,11 +381,15 @@ tal_trx_status_t set_trx_state(trx_cmd_t trx_cmd)
             tal_trx_status = TRX_SLEEP;
 #endif
             PAL_WAIT_1_US();
-            PAL_SLP_TR_HIGH();
+#ifndef EXTERNAL_OSC
+            PAL_SLP_TR_HIGH(); // Don't trigger CLKM disable (L->H while TRX_SLEEP).
+#endif
             pal_timer_delay(TRX_OFF_TO_SLEEP_TIME_CLKM_CYCLES);
             /* Transceiver register cannot be read during TRX_SLEEP or DEEP_SLEEP. */
             return tal_trx_status;
 
+            break;
+			
         case CMD_TRX_OFF:
             switch (tal_trx_status)
             {
@@ -592,9 +601,29 @@ static void switch_pll_on(void)
     pal_trx_reg_write(RG_TRX_STATE, CMD_PLL_ON);
     pal_get_current_time(&start_time);
 
+    long pll_timeout = 0;
     /* Wait for transceiver interrupt: check for IRQ line */
     while (PAL_TRX_IRQ_HIGH() == false)
     {
+		pll_timeout++;
+		
+		//Reset the TRX and retry the pll lock as the lock never happened or was missed.
+		//There is no mention of this in the errata, but it does occur randomly.
+		if (pll_timeout > 100000)
+		{
+			
+			pll_timeout = 0;
+			/* Switch TRX off */
+			while (set_trx_state(CMD_TRX_OFF) != TRX_OFF);
+			
+			/* Enable transceiver's PLL lock interrupt */
+			pal_trx_reg_write(RG_IRQ_MASK, TRX_IRQ_0_PLL_LOCK);
+
+			/* Switch PLL on */
+			pal_trx_reg_write(RG_TRX_STATE, CMD_PLL_ON);
+			pal_get_current_time(&start_time);
+		}
+		
         /* Handle errata "potential long PLL settling duration". */
         pal_get_current_time(&current_time);
         if (pal_sub_time_us(current_time, start_time) > PLL_LOCK_DURATION_MAX_US)

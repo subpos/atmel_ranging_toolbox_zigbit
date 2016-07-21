@@ -521,7 +521,7 @@ void mac_process_beacon_frame(buffer_t *beacon)
 #endif /* ((MAC_SCAN_SUPPORT == 1) || (MAC_SYNC_REQUEST == 1)) */
 
 
-
+#ifdef ENABLE_RTB_REMOTE
 #ifdef BEACON_SUPPORT
 /**
  * @brief Handle T_Poll_Wait_Time timer in case we expected a broadcast
@@ -548,6 +548,7 @@ static void mac_t_wait_for_bc_time_cb(void *callback_parameter)
     callback_parameter = callback_parameter;  /* Keep compiler happy. */
 }
 #endif  /* BEACON_SUPPORT */
+#endif
 
 /* EOF */
 

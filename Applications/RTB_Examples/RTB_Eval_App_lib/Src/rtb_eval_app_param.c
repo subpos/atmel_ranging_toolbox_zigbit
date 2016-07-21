@@ -28,7 +28,7 @@
 #define EEPROM_RECORD_OFFSET (16)
 
 /* Length of buffer for user input. */
-#define LENGTH_OF_USER_INPUT_BUF        (11)
+#define LENGTH_OF_USER_INPUT_BUF        (18)//(11) //To allow long long int input
 
 /* === Globals =============================================================*/
 
@@ -157,7 +157,44 @@ int get_int(void)
     return atoi(buf);
 }
 
+/**
+ * Read an integer value from SIO.
+ *
+ * The procedure is terminated after the ENTER-key is pressed.
+ *
+ * @return converted integer value.
+ */
+uint64_t get_longint(void)
+{
+    char buf[LENGTH_OF_USER_INPUT_BUF], *p;
+    
+    p = buf;
+    do
+    {
+        *p = sio_getchar();
+        if (*p == 0x0d || *p == 0x0a || p >= &buf[LENGTH_OF_USER_INPUT_BUF - 1])
+        {
+            *p = 0;
+            break;
+        }
+        sio_putchar(*p++);
+    }
+    while (1);
+    
+    return atoll(buf);
+}
 
+uint64_t atoll(char *instr)
+{
+  uint64_t retval;
+  //int i;
+
+  retval = 0;
+  for (; *instr; instr++) {
+    retval = 10*retval + (*instr - '0');
+  }
+  return retval;
+}
 
 void print_range_addresses(bool was_remote)
 {
@@ -297,7 +334,9 @@ void range_set_default_addr(void)
     app_data.app_addressing.init_long_addr_for_rem = DEFAULT_INITIATOR_LONG_ADDR_REMOTE;
     app_data.app_addressing.refl_long_addr = DEFAULT_REFLECTOR_LONG_ADDR;
     app_data.app_addressing.range_addr_scheme = RANGE_INIT_SHORT_REFL_SHORT;
+	#ifdef ENABLE_RTB_REMOTE
     gate_way_addr_mode = COORDINATOR_SHORT_ADDR;
+	#endif
 
 #if (AUTOMATIC_NODE_DETECTION_RTB == 1)
     if (INITIATOR == cur_node_type)
@@ -551,7 +590,7 @@ bool set_freq_stop(void)
 }
 
 
-
+#ifdef ENABLE_RTB_REMOTE
 bool set_coordinator_addr_mode(void)
 {
     int input;
@@ -569,13 +608,13 @@ bool set_coordinator_addr_mode(void)
 
     return false;
 }
-
+#endif
 
 
 bool set_init_long_addr(void)
 {
     printf("Initiator Long Address for Remote Ranging [64bit decimal]:");
-    app_data.app_addressing.init_long_addr_for_rem = get_int();
+    app_data.app_addressing.init_long_addr_for_rem = get_longint();
     return true;
 }
 
@@ -640,7 +679,7 @@ bool set_provisioning_of_tx_power(void)
 bool set_refl_long_addr(void)
 {
     printf("Reflector Long Address [64bit decimal]:");
-    app_data.app_addressing.refl_long_addr = get_int();
+    app_data.app_addressing.refl_long_addr = get_longint();
     return true;
 }
 

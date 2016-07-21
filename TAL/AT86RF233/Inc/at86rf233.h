@@ -1047,7 +1047,8 @@
 /** Constant RX_ENABLE for sub-register @ref SR_RX_PDT_DIS in register RX_SYN */
 #define RX_ENABLE   (0)
 
-/** Constant RX_OFFSET_16US for sub-register @ref SR_RX_RPC_CTRL in register TRX_RPC */
+/** Constant RX_
+_16US for sub-register @ref SR_RX_RPC_CTRL in register TRX_RPC */
 #define RX_OFFSET_16US   (3)
 
 /** Constant RX_OFFSET_MIN for sub-register @ref SR_RX_RPC_CTRL in register TRX_RPC */

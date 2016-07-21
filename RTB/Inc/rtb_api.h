@@ -46,7 +46,7 @@ typedef struct wpan_rtb_range_req_tag
      * Other values are not allowed.
      */
     uint8_t InitiatorAddrMode;
-#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
+//#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
     /**
      * The 16 bit PAN identifier of the Initiator.
      */
@@ -55,7 +55,7 @@ typedef struct wpan_rtb_range_req_tag
      * The individual device address the Initiator.
      */
     uint64_t InitiatorAddr;
-#endif  /* #if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN) */
+//#endif  /* #if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN) */
     /**
      * The Reflector addressing mode for this primitive.
      * This value can take one of the following values:
@@ -72,7 +72,7 @@ typedef struct wpan_rtb_range_req_tag
      * The individual device address the Reflector.
      */
     uint64_t ReflectorAddr;
-#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
+//#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
     /**
      * The Coordinator addressing mode for the received range request.
      * This value can take one of the following values:
@@ -83,7 +83,7 @@ typedef struct wpan_rtb_range_req_tag
      * This is a remote range request
      */
     uint8_t CoordinatorAddrMode;
-#endif  /* #if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN) */
+//#endif  /* #if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN) */
 } wpan_rtb_range_req_t;
 
 
@@ -421,14 +421,15 @@ extern pmu_avg_data_t pmu_avg_data;
 
 /* === Macros =============================================================== */
 
-#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
 /** No Coordinator requested, i.e. regular ranging */
 #define NO_COORDINATOR                  (FCF_NO_ADDR)
+
+//#if defined(ENABLE_RTB_REMOTE) || defined(DOXYGEN)
 /** Coordinator uses its short address for remote ranging */
 #define COORDINATOR_SHORT_ADDR          (FCF_SHORT_ADDR)
 /** Coordinator uses its long address for remote ranging */
 #define COORDINATOR_LONG_ADDR           (FCF_LONG_ADDR)
-#endif  /* ENABLE_RTB_REMOTE */
+//#endif  /* ENABLE_RTB_REMOTE */
 
 /* === Prototypes =========================================================== */
 #ifdef __cplusplus

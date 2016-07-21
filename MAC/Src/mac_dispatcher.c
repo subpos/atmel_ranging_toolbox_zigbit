@@ -252,7 +252,11 @@ void dispatch_event(uint8_t *event)
      * in these cases.
      * In regular cases, where code is not larger than 128K, the size
      * of a function pointer is 16 bit and properly read via PGM_READ_WORD.
-     */
+     *
+     * Update: In order for this to work, the option -mrelax must be given 
+     * on the compiler command-line that is used to link the final ELF file. 
+     * (Older compilers did not implement this option for the AVR, 
+     * use -Wl,--relax instead.)     */
     /* Check for regular MAC requests. */
     if (buffer_body[CMD_ID_OCTET] <= LAST_MESSAGE)
     {

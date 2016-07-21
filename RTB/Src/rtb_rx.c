@@ -85,7 +85,6 @@ void rtb_process_data_ind(uint8_t *msg)
 {
     buffer_t *buf_ptr = (buffer_t *)msg;
     frame_info_t *frameptr = (frame_info_t *)BMM_BUFFER_POINTER(buf_ptr);
-
     mac_parse_data.mpdu_length = frameptr->mpdu[0];
 
     /* First extract LQI. */
@@ -243,7 +242,7 @@ static bool handle_rx_rtb_frame_type(frame_info_t *rx_frame_ptr)
                             }
                         }
                         break;
-
+					
                     case CMD_RESULT_REQ:
                         {
                             /* This is a result request frame. */
@@ -276,6 +275,9 @@ static bool handle_rx_rtb_frame_type(frame_info_t *rx_frame_ptr)
                         break;
 
                     default:
+/*#ifndef ENABLE_RTB_PRINT
+					    printf("Unknown RX command to process: 0x%x", rcmd);	
+#endif	*/				
                         break;
                 }   /* switch (rcmd) */
             }   /* This frame is an RTB frame. */
@@ -508,7 +510,7 @@ static void handle_range_req_frame(uint8_t *curr_frame_ptr)
 #if (ANTENNA_DIVERSITY == 1)
                 /*
                  * If we allow antenna diversity generally,
-                 * use antenna diversity value received from the initator,
+                 * use antenna diversity value received from the initiator,
                  * and simply update our own.
                  */
                 if (rtb_pib.EnableAntennaDiv)

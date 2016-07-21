@@ -125,6 +125,8 @@ void pal_assert(bool expression,
         tmpbuf[PGM_STRLEN(message) + 1] = '\0';
         PRINTF("Assertion Failed on File %s, line %d, expression %s\n",
                file, line, tmpbuf);
+		//printf("Assertion Failed on File %s, line %d, expression %s\n",
+	    //       file, line, tmpbuf);
 #endif  /* TEST_HARNESS */
     }
 }

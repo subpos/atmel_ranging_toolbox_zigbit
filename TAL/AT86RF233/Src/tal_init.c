@@ -116,7 +116,12 @@ retval_t tal_init(void)
 #if (EXTERN_EEPROM_AVAILABLE == 1)
     pal_ps_get(EXTERN_EEPROM, EE_IEEE_ADDR, 8, &tal_pib.IeeeAddress);
 #else
-    pal_ps_get(INTERN_EEPROM, EE_IEEE_ADDR, 8, &tal_pib.IeeeAddress);
+    #if (USER_SIGN_AVAILABLE == 1)
+        pal_ps_get(USER_SIGNATURE, USER_SIGNATURES_START + 2, 8, &tal_pib.IeeeAddress);
+        //http://www.atmel.com/Images/Atmel-42172-Wireless-ZigBit-ATZB-X0-256-3-0-C_Datasheet.pdf
+    #else
+        pal_ps_get(INTERN_EEPROM, EE_IEEE_ADDR, 8, &tal_pib.IeeeAddress);
+    #endif
 #endif
 
     /*
@@ -184,7 +189,7 @@ retval_t tal_init(void)
 #endif
 #endif
 
-    /* Initialize the buffer management module and get a buffer to store reveived frames. */
+    /* Initialize the buffer management module and get a buffer to store received frames. */
     bmm_buffer_init();
     tal_rx_buffer = bmm_buffer_alloc(LARGE_BUFFER_SIZE);
 #if DEBUG > 0
@@ -409,9 +414,28 @@ static retval_t internal_tal_reset(bool set_default_pib)
  */
 void trx_config(void)
 {
+//#ifndef EXTERNAL_OSC
     /* Set pin driver strength */
     pal_trx_bit_write(SR_CLKM_SHA_SEL, CLKM_SHA_DISABLE);
-    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_1MHZ);
+    //pal_trx_bit_write(SR_CLKM_CTRL, CLKM_2MHZ);
+	pal_trx_bit_write(SR_CLKM_CTRL, CLKM_16MHZ);
+/*#else
+    pal_trx_bit_write(SR_
+	_SHA_SEL, CLKM_SHA_DISABLE);
+#if (F_CPU == (32000000UL))
+#   error Invalid system clock for external clock
+#elif (F_CPU == (16000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_16MHZ); 
+#elif (F_CPU == (8000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_8MHZ); 
+#elif (F_CPU == (4000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_4MHZ); 
+#else
+#   error Unknown system clock
+#endif
+   
+#endif*/
+
 
     /*
      * After we have initialized a proper seed for rand(),

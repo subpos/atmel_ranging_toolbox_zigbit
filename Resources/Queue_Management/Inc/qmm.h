@@ -45,7 +45,7 @@ typedef struct
 /**
  * @brief Queue structure
  *
- * This structur defines the queue structure.
+ * This structure defines the queue structure.
  * The application should declare the queue of type queue_t
  * and call qmm_queue_init before invoking any other functionality of qmm.
  *

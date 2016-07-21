@@ -69,12 +69,12 @@ void set_slp_trx_low(void)
  * as required for ranging.
  */
 void rtb_tstamp_irq_init(void)
-{
+{	
     pal_trx_irq_dis();
 
     pal_trx_reg_read(RG_IRQ_STATUS);
     pal_trx_bit_write(SR_ARET_TX_TS_EN, 0x01);
-    pal_trx_bit_write(SR_IRQ_2_EXT_EN, 0x01);
+    pal_trx_bit_write(SR_IRQ_2_EXT_EN, 0x01); //Enable Timestamping over DIG2 on the at86rf233
 
     PORTC.INTFLAGS = PORT_INT1IF_bm;
 
@@ -82,7 +82,7 @@ void rtb_tstamp_irq_init(void)
 
     TIMER_SRC_DURING_TRX_AWAKE();
 
-    PORTC.INT1MASK = PIN1_bm;
+    PORTC.INT1MASK = PIN1_bm; //DIG2 over PortC 1
 
     /* Reset register, until time out is triggered is 65535 ms */
     TCC1_CNT = 0;
@@ -93,7 +93,7 @@ void rtb_tstamp_irq_init(void)
 
     TCC1_INTCTRLB = TC_CCAINTLVL_HI_gc;
 
-    TCC1_CTRLB |= TC1_CCAEN_bm;
+    TCC1_CTRLB |= TC1_CCAEN_bm;	
 }
 
 
@@ -143,7 +143,7 @@ ISR(TCC1_CCA_vect)
 
     start_timer(64);
 
-    timer_is_synced = true;
+    timer_is_synced = true; 
 }
 
 #endif  /* ((RTB_TYPE == RTB_PMU_233R) && (PAL_GENERIC_TYPE == XMEGA)) */

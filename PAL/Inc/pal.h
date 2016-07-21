@@ -158,7 +158,9 @@ typedef enum ps_type_tag
     /** MCU Internal EEPROM */
     INTERN_EEPROM,
     /** External EEPROM */
-    EXTERN_EEPROM
+    EXTERN_EEPROM,
+    /** External EEPROM */
+    USER_SIGNATURE
 } SHORTENUM ps_type_t;
 
 

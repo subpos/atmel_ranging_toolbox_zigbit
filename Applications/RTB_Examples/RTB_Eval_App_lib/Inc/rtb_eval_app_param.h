@@ -242,6 +242,7 @@ extern "C" {
 #else
     void range_set_default_addr(void);
 #endif
+    uint64_t atoll(char *instr);
     bool set_addr_scheme(void);
     bool set_antenna_diversity(void);
     bool set_channel(void);

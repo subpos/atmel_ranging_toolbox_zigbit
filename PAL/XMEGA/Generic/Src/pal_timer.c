@@ -507,7 +507,7 @@ void  pal_timer_delay(uint16_t delay)
      * Hence the delay implementation is put under critical region.
      */
 
-    ENTER_CRITICAL_REGION();
+   ENTER_CRITICAL_REGION();
 
     if (delay > MIN_DELAY_VAL)
     {

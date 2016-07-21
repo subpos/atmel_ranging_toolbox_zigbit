@@ -104,7 +104,7 @@
 /**
  * RTB role type.
  */
-typedef enum rtb_role_tag
+typedef enum rtb_role_tag //Typedef enum assigns zero intial value unless specified, so initator in this instance is 1
 {
     RTB_ROLE_NONE = 0,      /**< Node is currently not involved in ranging. */
     RTB_ROLE_INITIATOR,     /**< Node is currently acting as Initiator in ranging. */
@@ -506,8 +506,8 @@ typedef enum conf_on_error_tag
 extern rtb_state_t last_rtb_state;
 extern range_param_t range_param;
 extern range_param_pmu_t range_param_pmu;
-extern range_status_t range_status;
-extern range_status_pmu_t range_status_pmu;
+extern volatile range_status_t range_status;
+extern volatile range_status_pmu_t range_status_pmu;
 extern int8_t rtb_dist_offset;
 extern rtb_pib_t rtb_pib;
 extern result_frame_ie_t req_result_type;

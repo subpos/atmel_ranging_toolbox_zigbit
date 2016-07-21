@@ -61,6 +61,7 @@
 && !defined(__AVR_ATxmega192A3__) \
 && !defined(__AVR_ATxmega192D3__) \
 && !defined(__AVR_ATxmega256A3__) \
+&& !defined(__AVR_ATxmega256A3U__) \
 && !defined(__AVR_ATxmega256D3__) \
 && !defined(__AVR_ATxmega256A3B__)
 #include <avr/boot.h>
@@ -772,6 +773,7 @@ typedef enum
 #define convert_64_bit_to_byte_array(value, data) \
     memcpy((data), (&(value)), sizeof(uint64_t))
 
+#ifndef PROTECTED_WRITE
 #define PROTECTED_WRITE(reg_, val_) \
     __asm__ volatile("out %[ccp], %[ccp_ioreg]" "\n\t"  \
                      "sts %[ioreg], %[val]"                          \
@@ -781,7 +783,7 @@ typedef enum
                      [ioreg] "M" (_SFR_MEM_ADDR(reg_)),            \
                      [val] "r" (val_)                              \
                     )
-
+#endif
 
 /* Introduce some workarounds, since avr lib's inttypes.h does not support the
  * following types currently. */

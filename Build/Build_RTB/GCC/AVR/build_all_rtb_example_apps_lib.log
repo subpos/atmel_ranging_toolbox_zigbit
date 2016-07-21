@@ -1,0 +1,54 @@
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM $Id: build_rtb_eval_app_lib_xmega.bat 34245 2013-02-11 12:32:24Z sschneid $ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ************************************************************* 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM Build RTB Example RTB Evaluation App based on RTB library 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ************************************************************* 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM     AT86RF233_ATXMEGA256A3_REB_8_1_CBB 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>cd ..\..\..\..\Applications\RTB_Examples\RTB_Eval_App_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC\ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_Eval_App_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make clean -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_Eval_App_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make all -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_Eval_App_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>cd ..\..\..\..\..\Build\Build_RTB\GCC\AVR\ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM $Id: build_rtb_star_demo_lib_xmega.bat 34245 2013-02-11 12:32:24Z sschneid $ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ******************************************************** 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM Build RTB Example RTB MAC Star Demo based on RTB library 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ******************************************************** 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM     AT86RF233_ATXMEGA256A3_REB_8_1_CBB 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>cd ..\..\..\..\Applications\RTB_Examples\RTB_MAC_Star_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC\ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_MAC_Star_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make clean -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_MAC_Star_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make all -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\RTB_MAC_Star_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>cd ..\..\..\..\..\Build\Build_RTB\GCC\AVR\ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM $Id: build_rtb_tal_app_lib_xmega.bat 34245 2013-02-11 12:32:24Z sschneid $ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ************************************ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM Build RTB Example MACless RTB Demo based on RTB library 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM ************************************ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>REM     AT86RF233_ATXMEGA256A3_REB_8_1_CBB 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Build\Build_RTB\GCC\AVR>cd ..\..\..\..\Applications\RTB_Examples\MACless_RTB_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC\ 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\MACless_RTB_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make clean -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\MACless_RTB_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>make all -f Makefile 
+
+C:\Users\Blair Wyatt\Share\RTB_v_1_1_7_Lib\Applications\RTB_Examples\MACless_RTB_Demo_lib\AT86RF233_ATXMEGA256A3_REB_8_1_CBB\GCC>cd ..\..\..\..\..\Build\Build_RTB\GCC\AVR\ 

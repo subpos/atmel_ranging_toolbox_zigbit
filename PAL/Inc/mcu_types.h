@@ -355,5 +355,8 @@
 #if defined(__ATxmega256A3__)
 #  define __AVR_ATxmega256A3__  (__ATxmega256A3__)
 #endif
+#if defined(__ATxmega256A3U__)
+#  define __AVR_ATxmega256A3U__  (__ATxmega256A3U__)
+#endif
 
 #endif /* MCU_TYPES_H */

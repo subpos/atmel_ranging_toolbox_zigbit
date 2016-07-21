@@ -363,12 +363,12 @@ void range_process_tal_tx_status(retval_t tx_status,  frame_info_t *frame)
                      * tight synchronization.
                      * The timer is actually cancelled once the entire PMU
                      * measurement has finished and regular operation is
-                     * in place again.
+                     * in place again. This is true and confirmed.
                      */
                     range_start_await_timer(RTB_AWAIT_PMU_START_FRAME);
 
                     /* Now the PMU Start frame is expected and handled. */
-                    pmu_perform_pmu_measurement();
+                    pmu_perform_pmu_measurement();			
                 }
             }
             break;
@@ -514,7 +514,7 @@ void range_build_frame(range_cmd_t cmd, frame_info_t *frame)
     uint16_t fcf = 0;
     wpan_addr_spec_t *src_addr_spec = NULL;
     wpan_addr_spec_t *dst_addr_spec = NULL;
-
+	
     /* Get the payload pointer. */
     switch (cmd)
     {
@@ -947,7 +947,7 @@ static uint8_t build_remote_range_conf_frame(uint8_t *curr_frame_ptr,
         /* Set status accepted. */
         *curr_frame_ptr++ = RTB_SUCCESS;
 
-        /* Range reject reason is dont't care here. */
+        /* Range reject reason is don't care here. */
         *curr_frame_ptr++ = 0;
 
         /* Set ranging results. */

@@ -155,7 +155,7 @@ typedef enum button_id_tag
 /**
  *  This macro restores the global interrupt status.
  */
-#define LEAVE_CRITICAL_REGION()         SREG = sreg;}
+#define LEAVE_CRITICAL_REGION()         SREG = sreg;} //This function can't be used unless the previous is.
 
 /**
  * This macro saves the trx interrupt status and disables the trx interrupt.

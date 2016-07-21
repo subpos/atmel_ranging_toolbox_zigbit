@@ -539,7 +539,8 @@ void continue_ranging(bool is_remote,
     wpan_rtb_range_req_t wrrr;
 
     fill_range_addresses(&wrrr, is_remote);
-    if (is_remote)
+    #ifdef ENABLE_RTB_REMOTE
+	if (is_remote)
     {
         wrrr.CoordinatorAddrMode = gate_way_addr_mode;
     }
@@ -547,6 +548,7 @@ void continue_ranging(bool is_remote,
     {
         wrrr.CoordinatorAddrMode = NO_COORDINATOR;
     }
+	#endif
 
     /* Update timestamp for continuous ranging. */
     uint32_t curr_time = 0;
@@ -717,7 +719,7 @@ void handle_cont_ranging_res(uint8_t status,
                             time_history[prev_time_history_idx];
 
         /*
-         * The first sucecssful ranging hase already been received, so
+         * The first successful ranging has already been received, so
          * add the received values to the existing arrays.
          * For the distance some sanity calculations are done.
          */
@@ -737,7 +739,7 @@ void handle_cont_ranging_res(uint8_t status,
         calc_distance_history();
 
         /*
-         * Calcualate filtered distance and DQF
+         * Calculate filtered distance and DQF
          * based on current filter method.
          */
         calc_filt_distance_and_dqf(app_data.app_filtering_len_cont);
@@ -860,7 +862,7 @@ void init_ranging(bool is_remote)
     wpan_rtb_range_req_t wrrr;
 
     fill_range_addresses(&wrrr, is_remote);
-    if (is_remote)
+	if (is_remote)
     {
         wrrr.CoordinatorAddrMode = gate_way_addr_mode;
     }

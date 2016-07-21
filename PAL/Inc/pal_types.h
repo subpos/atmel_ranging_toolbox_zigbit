@@ -44,6 +44,7 @@
 #    define ATXMEGA128A3                (0x03)
 #    define ATXMEGA256A3                (0x04)
 #    define ATXMEGA256D3                (0x05)
+#    define ATXMEGA256A3U                (0x06)
 
 #elif (PAL_GENERIC_TYPE == AVR32)
 /* PAL_TYPE for AVR 32-bit MCUs */

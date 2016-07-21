@@ -545,11 +545,11 @@ void pal_led(led_id_t led_no, led_action_t led_setting)
     switch (led_setting)
     {
         case LED_ON:
-            LED_PORT.OUTSET = _BV(pin);
+            LED_PORT.OUTCLR = _BV(pin);
             break;
 
         case LED_OFF:
-            LED_PORT.OUTCLR = _BV(pin);
+            LED_PORT.OUTSET = _BV(pin);
             break;
 
         case LED_TOGGLE:

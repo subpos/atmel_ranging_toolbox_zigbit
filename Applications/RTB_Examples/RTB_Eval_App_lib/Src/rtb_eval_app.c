@@ -24,9 +24,9 @@
 /* === Macros ============================================================== */
 
 /* Current RTB version ID */
-#define VERSION "V 1.1.7"
+#define VERSION "V 1.1.7.1a"
 
-#define BUILD_NO "$Id: rtb_eval_app.c 34344 2013-02-22 12:13:28Z sschneid $"
+#define BUILD_NO "$Id: rtb_eval_app.c subpos.org $"
 
 #if (AUTOMATIC_NODE_DETECTION_RTB == 1)
 /* Timeout value to change node type during initialization phase. */
@@ -40,7 +40,9 @@
 
 app_data_t app_data;
 app_state_t app_state = APP_IDLE;
+//#ifdef ENABLE_RTB_REMOTE
 uint8_t gate_way_addr_mode = COORDINATOR_SHORT_ADDR;
+//#endif
 static bool load_factory_in_progress = false;
 #if (AUTOMATIC_NODE_DETECTION_RTB == 1)
 static node_type_t node_type;
@@ -84,15 +86,15 @@ static void set_node_type_reflector(void);
 static void timeout_led_off_cb(void *parameter);
 static void timeout_update_node_type_cb(void *parameter);
 #endif  /* #if (AUTOMATIC_NODE_DETECTION_RTB == 1) */
-#if (DEBUG > 0)
+//#if (DEBUG > 0)
 static void set_distance_offset(void);
-#endif
+//#endif
 
 /* === Externals =========================================================== */
 
-#if (DEBUG > 0)
+//#if (DEBUG > 0)
 extern int8_t rtb_dist_offset;
-#endif
+//#endif
 
 /* === Implementation ====================================================== */
 
@@ -108,6 +110,7 @@ int main(void)
          * Stay here; we need a valid IEEE address.
          * Check kit documentation how to create an IEEE address
          * and to store it into the EEPROM.
+		 * http://www.atmel.com/Images/doc42006.pdf
          */
         pal_alert();
     }
@@ -117,6 +120,7 @@ int main(void)
     pal_led(LED_NODE_1, LED_OFF);
     pal_led(LED_NODE_2, LED_OFF);
     pal_led(LED_RANGING_ONGOING, LED_OFF);
+	
 
     /*
      * The stack is initialized above, hence the global interrupts are enabled
@@ -132,7 +136,7 @@ int main(void)
     }
 
 #if ((!defined __ICCAVR__) && (!defined __ICCARM__) && (!defined __GNUARM__) && \
-     (!defined __ICCAVR32__) && (!defined __AVR32__))
+(!defined __ICCAVR32__) && (!defined __AVR32__))
     fdevopen(_sio_putchar, _sio_getchar);
 #endif
 
@@ -142,13 +146,13 @@ int main(void)
 
     printf("\nRanging Toolbox Evaluation Application\n");
     printf("(Library build)\n");
-    printf(VERSION" (Build no. ");
+    printf(VERSION" (Build ");
 
-    /* Search for 1st occurence of space. */
+    /* Search for 1st occurrence of space. */
     build_no_start = memchr(build_string, ' ', sizeof(BUILD_NO));
     build_no_start++;
 
-    /* Search for 2nd occurence of space; the build number starts here. */
+    /* Search for 2nd occurrence of space; the build number starts here. */
     build_no_start = memchr(build_no_start, ' ', sizeof(BUILD_NO));
     build_no_start++;
 
@@ -209,7 +213,7 @@ int main(void)
     while (1)
     {
         wpan_task();
-        rtb_eval_app_task();
+        rtb_eval_app_task();	
     }
 }
 
@@ -309,7 +313,7 @@ static bool handle_user_input(int user_input)
                 init_ranging(false);
             }
             break;
-
+#ifdef ENABLE_RTB_REMOTE
         case 'M':
             {
                 if (app_data.app_filtering_len_cont > 1)
@@ -321,6 +325,7 @@ static bool handle_user_input(int user_input)
                 init_ranging(true);
             }
             break;
+#endif
 
         case 'h':
             rtb_eval_app_help_menu();
@@ -342,11 +347,11 @@ static bool handle_user_input(int user_input)
             eeprom_to_be_updated = set_freq_stop();
             break;
 
-#if (DEBUG > 0)
+//#if (DEBUG > 0)
         case 'O':
             set_distance_offset();
             break;
-#endif  /* (DEBUG > 0) */
+//#endif  /* (DEBUG > 0) */
 
         case 'd':
             eeprom_to_be_updated = set_default_antenna();
@@ -375,7 +380,7 @@ static bool handle_user_input(int user_input)
         case 'o':
             eeprom_to_be_updated = set_short_addr();
             break;
-
+#ifdef ENABLE_RTB_REMOTE
         case 'i':
             eeprom_to_be_updated = set_init_short_addr();
             break;
@@ -383,7 +388,7 @@ static bool handle_user_input(int user_input)
         case 'I':
             eeprom_to_be_updated = set_init_long_addr();
             break;
-
+#endif
         case 'r':
             eeprom_to_be_updated = set_refl_short_addr();
             break;
@@ -399,11 +404,11 @@ static bool handle_user_input(int user_input)
         case 's':
             eeprom_to_be_updated = set_addr_scheme();
             break;
-
+#ifdef ENABLE_RTB_REMOTE
         case 'g':
             eeprom_to_be_updated = set_coordinator_addr_mode();
             break;
-
+#endif
         case 't':
             eeprom_to_be_updated = set_transmit_power();
             break;
@@ -756,14 +761,13 @@ void usr_rtb_pmu_validity_ind(usr_rtb_pmu_validity_ind_t *urpv)
  */
 static void rtb_eval_app_help_menu(void)
 {
-    printf("\nCommands:\n"
-           "  h : Print help\n"
-           "\n Ranging Measurements:\n"
-           "  m : Run local ranging measurement\n"
-           "  M : Run remote ranging measurement\n"
-           "\n Parameters:\n"
-           "  p : Print ranging parameters\n"
-           "  F : Reload factory default parameters\n"
+    printf(" h : help\n"
+           " m : local ranging\n"
+		   #ifdef ENABLE_RTB_REMOTE
+           " M : remote ranging\n"
+		   #endif
+           " p : parameters\n"
+           " F : factory defaults\n"
           );
 }
 
@@ -774,125 +778,123 @@ static void rtb_eval_app_help_menu(void)
  */
 static void rtb_eval_app_param_menu(void)
 {
-    printf("\n[PARAM]\nCommunication Parameters:\n");
+    printf("\n[PARAM]\n:\n");
 
-    printf("  c : Channel = %" PRIu8 " [%" PRIu8 "...%" PRIu8 "]\n",
+    printf(" c: Channel = %" PRIu8 " [%" PRIu8 "...%" PRIu8 "]\n",
            tal_pib.CurrentChannel,
            MIN_CHANNEL,
            MAX_CHANNEL);
 
-    printf("  o : Own Short Address = 0x%04" PRIX16 " (%" PRIu16 ")\n",
+    printf(" o: Own Short Addr = 0x%04" PRIX16 " (%" PRIu16 ")\n",
            tal_pib.ShortAddress, tal_pib.ShortAddress);
-    printf("      Own Long Address = 0x%08"PRIX32"%08"PRIX32"\n",
+    printf("    Own Long Addr = 0x%08"PRIX32"%08"PRIX32"\n",
            (uint32_t)((tal_pib.IeeeAddress >> 32) & 0xffffffffUL),
            (uint32_t)(tal_pib.IeeeAddress  & 0xffffffffUL));
-
-    printf("  i : Initiator Short Address for Remote Ranging = 0x%04"PRIX16 " (%" PRIu16 ")\n",
+#ifdef ENABLE_RTB_REMOTE
+    printf(" i: Initr Short Address for Remote Ranging = 0x%04"PRIX16 " (%" PRIu16 ")\n",
            app_data.app_addressing.init_short_addr_for_rem,
            app_data.app_addressing.init_short_addr_for_rem);
-    printf("  I : Initiator Long Address for Remote Ranging = 0x%08"PRIX32"%08"PRIX32"\n",
+    printf(" I: Initr Long Address for Remote Ranging = 0x%08"PRIX32"%08"PRIX32"\n",
            (uint32_t)((app_data.app_addressing.init_long_addr_for_rem >> 32) & 0xffffffffUL),
            (uint32_t)(app_data.app_addressing.init_long_addr_for_rem  & 0xffffffffUL));
-
-    printf("  r : Reflector Short Address = 0x%04" PRIX16 " (%" PRIu16 ")\n",
+#endif
+    printf(" r: Reflr Short Addr = 0x%04" PRIX16 " (%" PRIu16 ")\n",
            app_data.app_addressing.refl_short_addr,
            app_data.app_addressing.refl_short_addr);
-    printf("  R : Reflector Long Address = 0x%08"PRIX32"%08"PRIX32"\n",
+    printf(" R: Reflr Long Addr = 0x%08"PRIX32"%08"PRIX32"\n",
            (uint32_t)((app_data.app_addressing.refl_long_addr >> 32) & 0xffffffffUL),
            (uint32_t)(app_data.app_addressing.refl_long_addr  & 0xffffffffUL));
 
-    printf("  P : PAN_Id = 0x%04" PRIX16 " (%" PRIu16 ")\n",
+    printf(" P: PAN_Id = 0x%04" PRIX16 " (%" PRIu16 ")\n",
            tal_pib.PANId, tal_pib.PANId);
 
-    printf("  s : Ranging Addressing Scheme = %" PRIu8 " [0,1,2,3]\n", app_data.app_addressing.range_addr_scheme);
-    printf("      (0 - Initiator short address, Reflector short address)\n");
-    printf("      (1 - Initiator short address, Reflector long address)\n");
-    printf("      (2 - Initiator long address, Reflector short address)\n");
-    printf("      (3 - Initiator long address, Reflector long address)\n");
+    printf(" s: Addr Scheme = %" PRIu8 " [0,1,2,3]\n", app_data.app_addressing.range_addr_scheme);
+    printf("    (0 - Initr short addr, Reflr short addr)\n");
+    printf("    (1 - Initr short addr, Reflr long addr)\n");
+    printf("    (2 - Initr long addr, Reflr short addr)\n");  
+    printf("    (3 - Initr long addr, Reflr long addr)\n");
+#ifdef ENABLE_RTB_REMOTE 	
+    printf(" g: Coordr Addr Mode = %" PRIu8 " [2,3]\n", gate_way_addr_mode);
+    printf("    (2 - Short addr)\n");
+    printf("    (3 - Long addr)\n");
+#endif
 
-    printf("  g : Coordinator Addressing Mode = %" PRIu8 " [2,3]\n", gate_way_addr_mode);
-    printf("      (2 - Short address)\n");
-    printf("      (3 - Long address)\n");
+    printf("\nParam:\n");
 
-
-    printf("\nRanging Parameters:\n");
-
-    printf("  n : Filtering length during continuous Ranging = %" PRIu8 " [1...%" PRIu8 "]\n",
+    printf(" n: Filtering length = %" PRIu8 " [1...%" PRIu8 "]\n",
            app_data.app_filtering_len_cont,
            (uint8_t)MAX_LEN_OF_FILTERING_CONT);
 
-    printf("  f : Filtering method for continuous Ranging = ");
+    printf(" f: Filtering method = ");
     if (FILT_AVER == app_data.app_filtering_method_cont)
     {
-        printf("Average of distance and DQF\n");
+        printf("Avg dist and DQF\n");
     }
     else if (FILT_MEDIAN == app_data.app_filtering_method_cont)
     {
-        printf("Median of distance and DQF\n");
+        printf("Median dist and DQF\n");
     }
     else if (FILT_MIN == app_data.app_filtering_method_cont)
     {
-        printf("Min. of distance and DQF\n");
+        printf("Min of dist and DQF\n");
     }
     else if (FILT_MIN_VAR == app_data.app_filtering_method_cont)
     {
-        printf("Min. of distance and DQF considerung variance\n");
+        printf("Min of dist and DQF cons variance\n");
     }
     else if (FILT_MAX == app_data.app_filtering_method_cont)
     {
-        printf("Max. of distance and DQF)\n");
+        printf("Max of dist and DQF)\n");
     }
     else
     {
-        printf("Undefined Filtering method\n");
+        printf("Undef Filt method\n");
     }
 
-    printf("  d : Default Antenna = %"PRIu8" [0,1] (AD disabled only)\n", rtb_pib.DefaultAntenna);
+    printf(" d: Def Ant = %"PRIu8" [0,1]\n", rtb_pib.DefaultAntenna);
 
 #if (defined(ANTENNA_DIVERSITY) && (ANTENNA_DIVERSITY == 1))
-    printf("  a : Antenna Diversity = %"PRIu8" [0,1]\n", rtb_pib.EnableAntennaDiv);
+    printf(" a: Ant Div = %"PRIu8" [0,1]\n", rtb_pib.EnableAntennaDiv);
 #else
-    printf("  a : Antenna Diversity = 0 (feature disabled on this Board/Configuration\n");
+    printf(" a: Ant Div = 0\n");
 #endif
 
-    printf("  e : Provide all Measurement Results = %"PRIu8" [0,1]\n",
+    printf(" e: All meas results = %"PRIu8" [0,1]\n",
            rtb_pib.ProvideAntennaDivResults);
 
-    printf("  w : Apply Minimum Threshold during weighted Distance Calc = %"PRIu8" [0,1]\n",
+    printf(" w: Apply Min Thres = %"PRIu8" [0,1]\n",
            rtb_pib.ApplyMinDistThreshold);
 
-    printf("      Ranging Method = %X -> ", rtb_pib.RangingMethod);
+    printf("     Ranging Method = %X -> ", rtb_pib.RangingMethod);
 
     if (rtb_pib.RangingMethod == RTB_PMU_233R)
     {
-        printf("PMU based on AT86RF233\n");
+        printf("PMU RF233\n");
     }
-    printf("  1 : Frequency Start = %" PRIu16 " MHz [%" PRIu16 "...%" PRIu16 "]\n"
-           "  2 : Frequency Step = %" PRIu8 " -> %0.1f MHz [0,1,2,3]\n"
-           "  3 : Frequency Stop = %" PRIu16 " MHz [%" PRIu16 "...%" PRIu16 "]\n",
+    printf("  1 : Freq Start = %" PRIu16 "MHz [%" PRIu16 "...%" PRIu16 "]\n"
+           "  2 : Frequ Step = %" PRIu8 " -> %0.1f MHz [0,1,2,3]\n"
+           "  3 : Freq Stop = %" PRIu16 "MHz [%" PRIu16 "...%" PRIu16 "]\n",
            rtb_pib.PMUFreqStart, (uint16_t)PMU_MIN_FREQ, (uint16_t)PMU_MAX_FREQ,
            rtb_pib.PMUFreqStep, ((1 << rtb_pib.PMUFreqStep) * 0.5),
            rtb_pib.PMUFreqStop, (uint16_t)PMU_MIN_FREQ, (uint16_t)PMU_MAX_FREQ
           );
 
-#if (DEBUG > 0)
-    printf("  O : Distance Offset = %" PRId8 " cm\n", rtb_dist_offset);
-#else
-    printf("      Distance Offset = %" PRId8 " cm\n", DISTANCE_OFFSET);
-#endif
-
-    printf("\nMisc. Parameters:\n");
-    printf("  v : Verbose = %" PRIu8 " [0...%" PRIu8 "]\n",
+//#if (DEBUG > 0)
+    printf("  O : Dist Offset = %" PRId8 " cm\n", rtb_dist_offset);
+//#else
+//    printf("      Distance Offset = %" PRId8 " cm\n", DISTANCE_OFFSET);
+//#endif
+    printf("  v: Verb = %" PRIu8 " [0...%" PRIu8 "]\n",
            rtb_pib.PMUVerboseLevel, 1);
 
-    printf("\nRadio Parameters:\n");
+    printf("\nRadio Param:\n");
     /* Print tx power settings */
     {
         int8_t tx_pwr_dbm;
         tx_pwr_dbm = CONV_phyTransmitPower_TO_DBM(rtb_pib.RangingTransmitPower);
-        printf("  t : Tx Power during Ranging = %" PRId8 " dBm\n", tx_pwr_dbm);
+        printf(" t: Tx Pwr = %" PRId8 " dBm\n", tx_pwr_dbm);
 
-        printf("  T : Provide Ranging Tx Power for next Ranging = %"PRIu8" [0,1]\n",
+        printf(" T: Tx Power for Next = %"PRIu8" [0,1]\n",
                rtb_pib.ProvideRangingTransmitPower);
     }
 
@@ -1087,7 +1089,7 @@ static void flash_all_leds(void)
 
 
 
-#if (DEBUG > 0)
+//#if (DEBUG > 0)
 static void set_distance_offset(void)
 {
     int input;
@@ -1099,6 +1101,6 @@ static void set_distance_offset(void)
         rtb_dist_offset = input;
     }
 }
-#endif  /* (DEBUG > 0) */
+//#endif  /* (DEBUG > 0) */
 
 /* EOF */

@@ -47,6 +47,62 @@ static void eeprom_flush_buffer(void);
 static inline void NVM_EXEC();
 #endif
 
+#ifdef EXTERNAL_OSC
+//#define FREQ_OUT_PORT  (PORTD)
+//#define FREQ_OUT_PIN  (7)
+void external_osc(void)
+{
+    //#warning extosc
+    //pal_led(LED_PIN_2,LED_ON);
+    //Be sure CLKM is enabled.
+    pal_trx_bit_write(SR_CLKM_SHA_SEL, CLKM_SHA_DISABLE);
+	//pal_trx_bit_write(SR_CLKM_CTRL, CLKM_2MHZ);
+	pal_trx_bit_write(SR_CLKM_CTRL, CLKM_16MHZ);
+/*#if (F_CPU == (32000000UL))
+#   error Invalid system clock for external clock
+#elif (F_CPU == (16000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_16MHZ);
+#elif (F_CPU == (8000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_8MHZ);
+#elif (F_CPU == (4000000UL))
+    pal_trx_bit_write(SR_CLKM_CTRL, CLKM_4MHZ);
+#else
+#   error Unknown system clock
+#endif*/
+    
+	
+    //Set external clock
+	OSC.XOSCCTRL = OSC_FRQRANGE_12TO16_gc | OSC_XOSCSEL_EXTCLK_gc ;
+	OSC.CTRL |= OSC_XOSCEN_bm ; // enable it
+	while( (OSC.STATUS & OSC_XOSCRDY_bm) == 0 ){} // wait until it's stable
+		
+
+#if (F_CPU == (32000000UL))
+//#   error Invalid system clock for external clock
+	OSC.PLLCTRL = OSC_PLLSRC_XOSC_gc | 2 ; //Set 2x PLL
+	//#warning cannot set 32x PLL on xmega256a3u max is 31
+//#elif (F_CPU == (16000000UL))
+//	OSC.PLLCTRL = OSC_PLLSRC_XOSC_gc | 16 ; //Set 16x PLL
+//#elif (F_CPU == (8000000UL))
+//    #warning PLL of 8 will give timing errors.
+	//OSC.PLLCTRL = OSC_PLLSRC_XOSC_gc | 8 ; //Set 8x PLL
+//#elif (F_CPU == (4000000UL))
+//    #error Cannot set PLL of 4, too unreliable
+	//OSC.PLLCTRL = OSC_PLLSRC_XOSC_gc | 4 ; //Set 4x PLL
+#else
+#   error Clock must be set to 32MHz when using CLKM as OSC
+#endif
+	//Enable the PLL
+	OSC.CTRL |= OSC_PLLEN_bm;
+	while( (OSC.STATUS & OSC_PLLRDY_bm) == 0 ){} // wait until it's stable
+    
+	CCP = CCP_IOREG_gc; // protected write follows 
+    CLK.CTRL = CLK_SCLKSEL_PLL_gc; //  //CLK_SCLKSEL_XOSC_gc;
+	//pal_led(LED_PIN_1,LED_ON);
+		
+}
+#endif
+
 /* === Implementation ====================================================== */
 
 /**
@@ -58,13 +114,22 @@ static inline void NVM_EXEC();
   */
 retval_t pal_init(void)
 {
+#ifndef EXTERNAL_OSC
     clock_init();
+#endif
+
+
 #if defined(ENABLE_RP) || defined(ENABLE_RH)
     gpio_init(true);
 #else
     gpio_init();
 #endif
+
     trx_interface_init();
+	
+#ifdef EXTERNAL_OSC
+    external_osc();
+#endif
 #ifdef CW_SUPPORTED
     TST_INIT();
 #endif
@@ -95,10 +160,17 @@ retval_t pal_init(void)
  */
 void pal_basic_init(void)
 {
+#ifndef EXTERNAL_OSC
     clock_init();
+#endif
+
     gpio_init(false);
+    
 #ifdef CW_SUPPORTED
     TST_INIT();
+#endif
+#ifdef EXTERNAL_OSC
+    external_osc();
 #endif
     timer_init();
     event_system_init();
@@ -115,6 +187,7 @@ void pal_basic_init(void)
     wdt_parallel_timer_init();
 #endif
 #endif
+
 }
 #endif  /* ENABLE_RP */
 
@@ -265,7 +338,7 @@ static void eeprom_write_byte(uint8_t addr, uint8_t value)
 
     addrcpy = (uint16_t)addr;
 
-    /*  Flush buffer to make sure no unintetional data is written and load
+    /*  Flush buffer to make sure no unintentional data is written and load
      *  the "Page Load" command into the command register.
      */
     eeprom_flush_buffer();
@@ -286,6 +359,18 @@ static void eeprom_write_byte(uint8_t addr, uint8_t value)
     NVM_EXEC();
 }
 
+uint8_t ReadUserSigByte( uint8_t index ){
+	uint8_t result;
+
+	/* Load the NVM Command register to read the calibration row. */
+	NVM_CMD = NVM_CMD_READ_USER_SIG_ROW_gc;
+	result = pgm_read_byte(index);
+
+	/* Clean up NVM Command register. */
+	NVM_CMD = NVM_CMD_NO_OPERATION_gc;
+
+	return( result );
+}
 
 /**
  * @brief Get data from persistence storage
@@ -323,6 +408,24 @@ retval_t pal_ps_get(ps_type_t ps_type, uint16_t start_addr, uint16_t length, voi
                 *data_ptr = eeprom_read_byte((uint8_t *)(index + start_addr));
                 data_ptr++;
             }
+        }
+        else if (ps_type == USER_SIGNATURE)
+        {
+            uint16_t index;
+            uint8_t *data_ptr;
+
+            if ((start_addr + length) > (USER_SIGNATURES_END + 1))
+            {
+                return FAILURE;
+            }
+
+            data_ptr = (uint8_t *)(value);
+            for (index = 0; index < length; index++)
+            {
+                *data_ptr = ReadUserSigByte(index + start_addr);
+                data_ptr++;
+            }     
+           
         }
         else    // no internal eeprom and no external eeprom available
         {

@@ -70,10 +70,10 @@ range_param_t range_param;
 range_param_pmu_t range_param_pmu;
 
 /** Status variable, it holds all general measurement data. */
-range_status_t range_status;
+range_status_t volatile range_status;
 
 /** Status variable, it holds all PMU related measurement data. */
-range_status_pmu_t range_status_pmu;
+range_status_pmu_t volatile range_status_pmu;
 
 /** Status variable hold current requested or confirmed result data type. */
 result_frame_ie_t req_result_type;
@@ -159,8 +159,11 @@ retval_t rtb_init(void)
     rtb_role = RTB_ROLE_NONE;
 
     /* Initialize the TAL to RTB queue */
-    qmm_queue_init(&tal_rtb_q);
-
+	#ifdef ENABLE_QUEUE_CAPACITY
+	qmm_queue_init(&tal_rtb_q, TAL_INCOMING_FRAME_QUEUE_CAPACITY);
+	#else
+	qmm_queue_init(&tal_rtb_q);
+	#endif  /* ENABLE_QUEUE_CAPACITY */
     /*
      * Reset the PMU average data since no valid PMU average data are available
      * at this stage.
@@ -997,7 +1000,7 @@ static void range_result_calculation(void)
     }
 #endif  /* #if defined(SIO_HUB) && defined(ENABLE_RTB_PRINT)&& !defined(RTB_WITHOUT_MAC) */
 
-    pmu_math_pmu_2_dist();
+    pmu_math_pmu_2_dist(); //range_pmu_result_data is shared between the static lib functions only!
 }
 
 
@@ -1027,7 +1030,7 @@ void range_start_await_timer(rtb_state_t current_state)
 
 void range_stop_await_timer(void)
 {
-    pal_timer_stop(T_RTB_Wait_Time);
+	pal_timer_stop(T_RTB_Wait_Time);
 }
 
 
