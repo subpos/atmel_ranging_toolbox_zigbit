@@ -1,5 +1,5 @@
 # atmel_ranging_toolbox_zigbit
-Modifications to allow the Atmel RTB to run on an Atmel ATxmega256A3U-and-AT86RF233-ZigBit:
+Modifications to allow the Atmel RTB to run on an Atmel ATxmega256A3U-and-AT86RF233-ZigBit module:
 
 http://www.atmel.com/devices/ATxmega256A3U-and-AT86RF233-ZigBit-Wireless-Module.aspx
 
