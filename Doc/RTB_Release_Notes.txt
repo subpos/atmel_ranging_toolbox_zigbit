@@ -1,0 +1,49 @@
+ATMEL Corporation Inc.
+
+This file contains release and version information for the Ranging Toolbox (RTB) used in conjunction with the AVR2025 MAC package for 802.15.4 transceivers and microcontrollers of ATMEL Corp. For license information see separate file: EULA.txt.
+
+Support contact: avr@atmel.com
+
+----------------------------------------------------------------------
+
+Release Version: 1.1.7 (First public release)
+Release Date: Februar, 25, 2013
+Build: 34346
+
+
+System requirements for AVR-based MCUs - Supported Compiler/Tools
+- Atmel Studio 6.0 (6.0.1843) including AVR GCC 8-bit toolchain
+  (Version 3.4.0_663 including GCC version 4.6.2)
+
+
+Supported devices
+Transceivers:
+    - AT86RF233
+
+Microcontrollers:
+    - ATxmega256A3
+
+
+
+Supported hardware platforms
+- REB-CBB boards with REB233 (REB233SMAD V8.1.0) with ATXMEGA256A3
+
+
+
+Known limitations and issues
+- RTB library requires MCU clock speed of 32MHz
+- MACless RTB Demo
+    - Supports only 79 frequency measurement points
+      (compared to 120 frequency points for regular ranging library based applications)
+    - Always uses PMU result compression; cannot provide uncompressed PMU results
+    - When using MACless RTB Demo as Reflector in conjunction with RTB Eval App
+      (as Initiator), make sure:
+        - The selected frequency range of the RTB Eval App comprises only a maximum
+          of 79 frequencies
+        - PMU result compression is always set to 1
+        - The MACless RTB Demo does currently not check these parameters, which results
+          in timeout errors at the Initiator node (runnign RTB Eval App)
+
+
+
+$Id: RTB_Release_Notes.txt 34345 2013-02-22 12:17:33Z sschneid $

@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# AvrStudio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "RTB_MAC_Star_Demo", "RTB_MAC_Star_Demo.cproj", "{6FFB6700-5642-41F2-8F02-9E19AF0CA659}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FFB6700-5642-41F2-8F02-9E19AF0CA659}.Release|AVR.ActiveCfg = Release|AVR
+		{6FFB6700-5642-41F2-8F02-9E19AF0CA659}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
