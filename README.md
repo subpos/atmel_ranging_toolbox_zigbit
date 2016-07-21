@@ -28,4 +28,7 @@ hour or so).
 You can adjust CONT_RANGING_PERIOD_MS   (100UL) in rtb_eval_app_param.h if you want faster 
 continuous ranging measurements.
 
+Also note that you must use an Atmel ICE or equivalent programmer to program the Zigbit module
+as the code here doesn't support the serial bootloader on the Zigbit.
+
 Licence - please read the Atmel EULA before using.
